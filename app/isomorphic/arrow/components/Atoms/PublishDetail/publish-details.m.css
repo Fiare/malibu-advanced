@@ -26,6 +26,8 @@
 .update-details {
   display: flex;
   margin-top: var(--arrow-spacing-xs);
+  align-items: baseline;
+  flex-wrap: wrap;
 }
 .dot-indicator {
   display: flex;

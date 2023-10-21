@@ -9,11 +9,11 @@ import { InputField } from "../../atoms/InputField";
 
 import "./forms.m.css";
 
-const SignUpBase = ({ onSignup, onLogin, qtConfig, currentPath }) => {
+const SignUpBase = ({ onSignup, onLogin, qtConfig, currentPath, customCallbackUrl }) => {
   const [userInfo, setUserInfo] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
   const [errorMsg, setError] = useState("");
   const [verficationSuccessMessage, setSuccessMessage] = useState("");
@@ -22,7 +22,7 @@ const SignUpBase = ({ onSignup, onLogin, qtConfig, currentPath }) => {
   const isVerificationLinkflow = get(qtConfig, ["publisher-attributes", "is_verification_link_flow"], true);
   const ssoLoginIsEnable = get(qtConfig, ["publisher-attributes", "sso_login", "is_enable"], false);
 
-  const signUpHandler = async e => {
+  const signUpHandler = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -45,7 +45,7 @@ const SignUpBase = ({ onSignup, onLogin, qtConfig, currentPath }) => {
       email: userInfo.email,
       username: userInfo.email,
       password: userInfo.password,
-      "dont-login": true
+      "dont-login": true,
     };
 
     try {
@@ -57,7 +57,8 @@ const SignUpBase = ({ onSignup, onLogin, qtConfig, currentPath }) => {
       if (isVerificationLinkflow) {
         const params = parseUrl(currentPath);
         const callbackUrl = ssoLoginIsEnable
-          ? get(params, ["query", "callback_uri"]) ||
+          ? customCallbackUrl ||
+            get(params, ["query", "callback_uri"]) ||
             get(qtConfig, ["publisher-attributes", "sso_login", "callback_Url"], "")
           : currentLocation;
         sendVerificationLink(userInfo.email, callbackUrl);
@@ -77,7 +78,7 @@ const SignUpBase = ({ onSignup, onLogin, qtConfig, currentPath }) => {
     }
   };
 
-  const setData = e => {
+  const setData = (e) => {
     const userObj = { ...userInfo };
     const fieldName = e.target.id;
     userObj[fieldName] = e.target.value;
@@ -136,12 +137,13 @@ SignUpBase.propTypes = {
   setMember: func,
   onLogin: func,
   qtConfig: object,
-  currentPath: string
+  currentPath: string,
+  customCallbackUrl: string,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   qtConfig: get(state, ["qt", "config"], {}),
-  currentPath: get(state, ["qt", "currentPath"], "")
+  currentPath: get(state, ["qt", "currentPath"], ""),
 });
 
 export const SignUp = connect(mapStateToProps, null)(SignUpBase);

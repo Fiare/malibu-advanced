@@ -195,7 +195,9 @@
     grid-column: 2 / 7;
   }
 }
-
+.story-content-inner-wrapper {
+  margin-bottom: var(--arrow-spacing-m) ;
+}
 .sideway-hero {
   @include tablet {
     grid-column: 6 / 13;

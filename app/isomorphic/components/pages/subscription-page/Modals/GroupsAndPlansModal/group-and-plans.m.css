@@ -1,0 +1,63 @@
+.title{
+  font-size: 32px;
+  text-align: center;
+}
+
+.description{
+  text-align: center;
+  font-size: 16px;
+  margin: 0 auto;
+  width: 40%;
+  padding-top: 12px;
+}
+
+.groups{
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 56px;
+  justify-content: space-evenly;
+}
+
+.group-card{
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  height: 280px;
+  border: 1px solid lightgray;
+  padding: 16px;
+}
+
+.group-name{
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.plan-name{
+  border: 1px solid lightgray;
+  height: 32px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.plan-description{
+  height: 120px;
+  margin-top: 16px;
+}
+
+.subscribe-btn{
+  background-color: black;
+  color: white;
+  height: 42px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.select-option{
+  border: none;
+}
+

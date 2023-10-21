@@ -127,3 +127,7 @@
 .user-account-item:hover {
   color: var(--brand-primary-dark);
 }
+
+.subscribe-btn {
+  color: var(--brand-secondary);
+}

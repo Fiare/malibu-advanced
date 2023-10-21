@@ -1,43 +1,41 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { SvgIconHandler } from "../../atoms/svg-icon-hadler";
-import { ProfileCard } from "./ProfileCard";
-import { EditProfile } from "./EditProfile";
+import get from "lodash/get";
+import { AccessType } from "@quintype/components";
+import { ProfilePageWithAccesstype } from "./ProfilePageWithAccesstype";
+
 import "./profile-page.m.css";
 
 const ProfilePage = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const member = useSelector(state => state.member || null);
-
-  if (!member) {
-    return <div styleName="not-logged-in">Please Login</div>;
-  }
+  const [isATGlobal, setIsATGlobal] = useState(false);
+  const member = useSelector((state) => get(state, ["member"], null));
+  const email = get(member, ["email"], "");
+  const phone = get(member, ["metadata", "phone-number"], "");
+  const { key, accessTypeBkIntegrationId } = useSelector((state) =>
+    get(state, ["qt", "config", "publisher-attributes", "accesstypeConfig"], {})
+  );
 
   return (
-    <div styleName="profile-page">
-      <div styleName="my-account">My Account</div>
-      <div styleName="profile-card">
-        <div styleName="avatar">
-          {member["avatar-url"] ? (
-            <img src={member["avatar-url"]} alt="avatar" height="160px" width="160px" styleName="avatar-image" />
-          ) : (
-            <SvgIconHandler type="user" styleName="user-icon" />
-          )}
-        </div>
-        {isEditing ? (
-          <EditProfile member={member} setIsEditing={setIsEditing} isEditing={isEditing} />
-        ) : (
-          <div>
-            <ProfileCard member={member} />
-            <div styleName="buttons-container">
-              <button styleName="button" onClick={() => setIsEditing(!isEditing)}>
-                Edit Profile
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+    <AccessType
+      enableAccesstype={true}
+      accessTypeKey={key}
+      email={email}
+      phone={phone}
+      accessTypeBkIntegrationId={accessTypeBkIntegrationId}
+      onATGlobalSet={() => {
+        setIsATGlobal(true);
+      }}
+    >
+      {({ initAccessType, getSubscriptionForUser, cancelSubscription }) => (
+        <ProfilePageWithAccesstype
+          member={member}
+          getSubscriptionForUser={getSubscriptionForUser}
+          cancelSubscription={cancelSubscription}
+          isATGlobal={isATGlobal}
+          initAccessType={initAccessType}
+        />
+      )}
+    </AccessType>
   );
 };
 

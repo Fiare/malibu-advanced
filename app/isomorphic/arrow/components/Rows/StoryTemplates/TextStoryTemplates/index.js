@@ -15,6 +15,7 @@ const TextStoryTemplate = ({
   widgetComp,
   firstChild,
   secondChild,
+  hasAccess,
 }) => {
   const {
     theme = "",
@@ -37,6 +38,7 @@ const TextStoryTemplate = ({
   const dataTestId = supportImageType[templateType]
     ? `text-story-${templateType}-${kebabCase(supportImageType[templateType])}`
     : `text-story-${templateType}`;
+
   return (
     <div
       data-test-id={dataTestId}
@@ -53,6 +55,8 @@ const TextStoryTemplate = ({
         firstChild={firstChild}
         secondChild={secondChild}
         timezone={timezone}
+        storyAccess={story.access}
+        hasAccess={hasAccess}
       />
     </div>
   );
@@ -70,6 +74,7 @@ TextStoryTemplate.propTypes = {
   storyElementsConfig: PropTypes.object,
   adComponent: PropTypes.func,
   widgetComp: PropTypes.func,
+  hasAccess: PropTypes.bool,
 };
 
 export default StateProvider(TextStoryTemplate);

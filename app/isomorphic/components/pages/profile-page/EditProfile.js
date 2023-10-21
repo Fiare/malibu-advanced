@@ -1,10 +1,11 @@
+/* eslint-disable react/no-unknown-property */
 import React, { useState } from "react";
 import { object, func, bool } from "prop-types";
 import { useDispatch } from "react-redux";
 import get from "lodash/get";
 import { updateUserProfile, signImage, uploadS3ToTemp } from "@quintype/bridgekeeper-js";
 import { MEMBER_UPDATED } from "../../store/actions";
-
+import { InputField } from "../../atoms/InputField";
 import "./profile-page.m.css";
 
 let tempImageKey = null;
@@ -16,21 +17,18 @@ const EditProfile = ({ member = {}, setIsEditing, isEditing }) => {
 
   const prepareFormData = (keys, imageList, res) => {
     // eslint-disable-next-line no-undef
-    const formdata = new FormData();
+    const formData = new FormData();
 
-    keys.forEach(key => {
-      key === "file" ? formdata.append(key, imageList[0]) : formdata.append(key, res[key]);
+    keys.forEach((key) => {
+      key === "file" ? formData.append(key, imageList[0]) : formData.append(key, res[key]);
     });
 
-    return formdata;
+    return formData;
   };
 
-  const onProfileChange = async event => {
+  const onProfileChange = async (event) => {
     setIsLoading(true);
     const imageList = event.target.files;
-
-    const signedImage = await signImage(imageList[0].name, imageList[0].type);
-
     const keys = [
       "key",
       "Content-Type",
@@ -39,13 +37,15 @@ const EditProfile = ({ member = {}, setIsEditing, isEditing }) => {
       "success_action_status",
       "AWSAccessKeyId",
       "signature",
-      "file"
+      "file",
     ];
 
-    const formdata = prepareFormData(keys, imageList, signedImage);
-
     try {
-      const uploadedImage = await uploadS3ToTemp(signedImage.action, formdata);
+      const signedImage = await signImage(imageList[0].name, imageList[0].type);
+      console.log("successfully signed the image");
+      const formData = prepareFormData(keys, imageList, signedImage);
+      const uploadedImage = await uploadS3ToTemp(signedImage.action, formData);
+      console.log("successfully uploaded the image to the s3-bucket");
       if (uploadedImage.status === 201) {
         tempImageKey = signedImage.key;
         setIsLoading(false);
@@ -55,9 +55,9 @@ const EditProfile = ({ member = {}, setIsEditing, isEditing }) => {
     }
   };
 
-  const onSubmitHandler = async e => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    const body = { name };
+    const body = { name, email: member.email || member["phone-number"] };
 
     if (tempImageKey !== null) {
       body["temp-s3-key"] = tempImageKey;
@@ -65,7 +65,10 @@ const EditProfile = ({ member = {}, setIsEditing, isEditing }) => {
 
     try {
       const currentUserResp = await updateUserProfile(body);
+      console.log("successfully updated profile");
       dispatch({ type: MEMBER_UPDATED, member: get(currentUserResp, ["user"], null) });
+      console.log(member, "<--member");
+      console.log("member updated successfully");
     } catch (error) {
       console.log(error);
     }
@@ -78,9 +81,15 @@ const EditProfile = ({ member = {}, setIsEditing, isEditing }) => {
       <div>
         <div styleName="fields-container">
           <b>Name: </b>
-          <input styleName="text-input" name="Name" type="text" value={name} onChange={e => setName(e.target.value)} />
+          <InputField
+            styleName="text-input"
+            name="Name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
           <b>Profile Pic: </b>
-          <input styleName="file-input" name="File" type="file" onChange={onProfileChange} />
+          <InputField styleName="file-input" name="File" type="file" onChange={onProfileChange} />
           {isLoading ? <div styleName="loading">Loading Image...</div> : <div styleName="loading"></div>}
         </div>
         <div styleName="buttons-container">
@@ -99,7 +108,7 @@ const EditProfile = ({ member = {}, setIsEditing, isEditing }) => {
 EditProfile.propTypes = {
   member: object,
   isEditing: bool,
-  setIsEditing: func
+  setIsEditing: func,
 };
 
 export { EditProfile };

@@ -6,6 +6,7 @@ const loadableConfigObj = {
       topbar: "./app/isomorphic/components/layouts/header",
       navbar: "./app/isomorphic/components/layouts/header/nav-bar",
       footer: "./app/isomorphic/components/layouts/footer",
+      ugcPage: "./app/isomorphic/components/pages/ugc-page/index.js",
       arrowElevenStoriesCssChunk: "./app/isomorphic/arrow/components/Rows/ElevenStories",
       arrowFourColGridCssChunk: "./app/isomorphic/arrow/components/Rows/FourColGrid",
       arrowFourColTwelveStoriesCssChunk: "./app/isomorphic/arrow/components/Rows/FourColTwelveStory",

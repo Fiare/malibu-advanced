@@ -83,6 +83,7 @@ StoryCollection.propTypes = {
 
 const AsideCollection = ({
   data = {},
+  slotData,
   config = {},
   horizontal = false,
   slots = [],
@@ -98,7 +99,6 @@ const AsideCollection = ({
 
   const { theme } = config;
   const isHorizontal = horizontal ? "horizontal-wrapper" : "";
-
   if (horizontal) {
     return (
       <div
@@ -136,7 +136,6 @@ const AsideCollection = ({
         );
     }
   };
-
   return (
     <div
       className="arrow-component arr--aside-collection"
@@ -152,7 +151,7 @@ const AsideCollection = ({
           publishedDetails={opts}
         />
       )}
-      {slots.map((slot, index) => asideSlot(slot.type, slot, index))}
+      {slotData.map((slot, index) => asideSlot(slot.type, slot, index))}
     </div>
   );
 };
@@ -163,6 +162,7 @@ AsideCollection.propTypes = {
   opts: PropTypes.object,
   horizontal: PropTypes.bool,
   slots: PropTypes.array,
+  slotData: PropTypes.array,
   adComponent: PropTypes.func,
   widgetComp: PropTypes.func,
   sticky: PropTypes.bool,

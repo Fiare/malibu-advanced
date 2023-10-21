@@ -177,6 +177,7 @@
 }
 
 .overlay-hero {
+  z-index: var(--z-index-m1);
   grid-column: 1/5;
   grid-row: 1/2;
   margin-top: var(--arrow-spacing-s);
@@ -194,10 +195,10 @@
 
 .overlay-grid {
   align-self: center;
-  z-index: var(--z-index-9);
   grid-row: 1/2;
   grid-column: 1/5;
   padding: 0 36px;
+  z-index: var(--z-index-m1);
   @include tablet {
     grid-column: 4/12;
     padding: 0;
@@ -313,9 +314,7 @@
 }
 
 .tablet-index-2 {
-  @include tablet {
-    z-index: 2;
-  }
+  z-index: var(--z-index-m2);
 }
 
 html[dir="rtl"] {

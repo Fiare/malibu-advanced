@@ -41,31 +41,39 @@ export const AuthorCard = ({ story = {}, template = "leftAligned", clazzName = "
     twitterUrl = getAuthorTwitterUrl(authors[0]);
   }
 
+  const flexType = authors.length > 1 ? "column" : "row";
+
   return (
     <div
       data-test-id={`author-card-${kebabCase(template)}`}
       className={clazzName}
-      styleName={`author-card-wrapper ${template}`}
+      styleName={`author-card-wrapper ${flexType} ${template}`}
     >
-      {authors.map((author, index) => {
-        return (
-          <React.Fragment key={author.id}>
-            {showImage && (author["avatar-url"] || author["avatar-s3-key"]) && (
-              <div data-test-id="author-image" styleName="author-image-wrapper">
-                <Link href={`${mountAt}/author/` + author.slug} key={`author-image-${index}`} aria-label="author-image">
-                  <div
-                    styleName={`author-image ${!index ? "first-author-image" : ""} ${
-                      !isSingleAuthor ? "multi-author-image" : ""
-                    }`}
+      <div styleName="author-images">
+        {authors.map((author, index) => {
+          return (
+            <React.Fragment key={author.id}>
+              {showImage && (author["avatar-url"] || author["avatar-s3-key"]) && (
+                <div data-test-id="author-image" styleName="author-image-wrapper">
+                  <Link
+                    href={`${mountAt}/author/` + author.slug}
+                    key={`author-image-${index}`}
+                    aria-label="author-image"
                   >
-                    {authorImage(author)}
-                  </div>
-                </Link>
-              </div>
-            )}
-          </React.Fragment>
-        );
-      })}
+                    <div
+                      styleName={`author-image ${!index ? "first-author-image" : ""} ${
+                        !isSingleAuthor ? "multi-author-image" : ""
+                      }`}
+                    >
+                      {authorImage(author)}
+                    </div>
+                  </Link>
+                </div>
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
       {showName && (
         <div data-test-id="author-name" styleName="author-name-share">
           {authors.map((author, index) => {

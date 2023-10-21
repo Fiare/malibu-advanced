@@ -3,6 +3,9 @@
 .stories {
   margin-top: var(--arrow-spacing-m);
 }
+.wrapper {
+  margin-top: var(--arrow-spacing-m);
+}
 .wrapper :global(.arr--collection-name) {
   margin-bottom: var(--arrow-spacing-m);
 }

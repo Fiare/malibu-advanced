@@ -1,4 +1,6 @@
+/* eslint-disable react/no-unknown-property */
 import React from "react";
+import { useSelector } from "react-redux";
 import get from "lodash/get";
 import PropTypes from "prop-types";
 import { SocialShareTemplate } from "../../../Molecules/SocialShareTemplate";
@@ -13,7 +15,11 @@ import { HeroImage } from "../../../Atoms/HeroImage";
 import { PublishDetails } from "../../../Atoms/PublishDetail";
 import { StoryTags } from "../../../Atoms/StoryTags";
 import { StoryElementCard, SlotAfterStory } from "../../../Molecules/StoryElementCard";
+import { MetypeCommentsWidget } from "../../../../../components/Metype/commenting-widget";
+import { MetypeReactionsWidget } from "../../../../../components/Metype/reaction-widget";
+
 import "./text-story.m.css";
+import { Paywall } from "../../Paywall";
 
 export const StoryTemplate = ({
   story = {},
@@ -24,6 +30,7 @@ export const StoryTemplate = ({
   firstChild,
   secondChild,
   timezone,
+  hasAccess,
 }) => {
   const {
     theme = "",
@@ -38,7 +45,11 @@ export const StoryTemplate = ({
     shareIconType = "plain-color-svg",
     premiumStoryIconConfig = {},
   } = config;
-
+  const metypeConfig = useSelector((state) => get(state, ["qt", "config", "publisher-attributes", "metypeConfig"], {}));
+  const isMetypeEnabled = useSelector((state) =>
+    get(state, ["qt", "config", "publisher-attributes", "enableMetype"], true)
+  );
+  const jwtToken = useSelector((state) => get(state, ["userReducer", "jwt_token"], null));
   const visibledCards = noOfVisibleCards < 0 ? story.cards : story.cards.slice(0, noOfVisibleCards);
   const storyId = get(story, ["id"], "");
   const HeaderCard = () => {
@@ -84,7 +95,9 @@ export const StoryTemplate = ({
     );
   };
 
-  const StoryData = () => {
+  const StoryData = ({ hasAccess }) => {
+    const isStoryBehindPaywall = story.access === "subscription" && hasAccess === false;
+
     return (
       <div styleName="gap-16">
         {authorDetails && <AuthorCard story={story} template={authorDetails.template} opts={authorDetails.opts} />}
@@ -92,18 +105,32 @@ export const StoryTemplate = ({
           <PublishDetails story={story} opts={publishedDetails} template="story" timezone={timezone} />
           {!verticalShare && <SocialShareComponent />}
         </div>
-        {visibledCards.map((card) => {
-          return (
+        {isStoryBehindPaywall ? (
+          <>
             <StoryElementCard
               story={story}
-              card={card}
-              key={get(card, ["id"], "")}
+              card={visibledCards[0]}
+              key={get(visibledCards[0], ["id"], "")}
               config={storyElementsConfig}
               adComponent={adComponent}
               widgetComp={widgetComp}
             />
-          );
-        })}
+            <Paywall />
+          </>
+        ) : (
+          visibledCards.map((card) => {
+            return (
+              <StoryElementCard
+                story={story}
+                card={card}
+                key={get(card, ["id"], "")}
+                config={storyElementsConfig}
+                adComponent={adComponent}
+                widgetComp={widgetComp}
+              />
+            );
+          })
+        )}
         {firstChild}
         <div styleName="story-tags">
           <StoryTags tags={story.tags} />
@@ -114,7 +141,6 @@ export const StoryTemplate = ({
             WidgetComp={widgetComp}
           />
         </div>
-        {secondChild}
       </div>
     );
   };
@@ -136,7 +162,7 @@ export const StoryTemplate = ({
     );
   };
 
-  const heroPriorityCenterTemplate = () => {
+  const heroPriorityCenterTemplate = (hasAccess) => {
     return (
       <>
         <div styleName="hero-image index-2" data-test-id="hero-priority-center-image">
@@ -145,7 +171,28 @@ export const StoryTemplate = ({
         <div styleName="story-content-inner-wrapper">
           <CaptionAttribution story={story} config={config} />
           <HeaderCard />
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         <AsideCollectionCard />
@@ -153,7 +200,7 @@ export const StoryTemplate = ({
     );
   };
 
-  const headlineHeroPriorityTemplate = () => {
+  const headlineHeroPriorityTemplate = (hasAccess) => {
     return (
       <>
         <div styleName="story-content-inner-wrapper">
@@ -164,7 +211,28 @@ export const StoryTemplate = ({
         </div>
         <div styleName="story-content-inner-wrapper">
           <CaptionAttribution story={story} config={config} />
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         <AsideCollectionCard />
@@ -172,7 +240,7 @@ export const StoryTemplate = ({
     );
   };
 
-  const heroVerticalTemplate = () => {
+  const heroVerticalTemplate = (hasAccess) => {
     return (
       <>
         <HeaderCard />
@@ -181,7 +249,28 @@ export const StoryTemplate = ({
         </div>
         <CaptionAttribution story={story} config={config} />
         <div styleName="story-content-inner-wrapper">
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         <AsideCollectionCard />
@@ -189,7 +278,7 @@ export const StoryTemplate = ({
     );
   };
 
-  const heroPriorityLeftTemplate = () => {
+  const heroPriorityLeftTemplate = (hasAccess) => {
     return (
       <>
         <div styleName="hero-image index-2" data-test-id="hero-priority-left-image">
@@ -198,7 +287,28 @@ export const StoryTemplate = ({
         <div styleName="story-content-inner-wrapper">
           <CaptionAttribution story={story} config={config} />
           <HeaderCard />
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         <SideColumn />
@@ -206,7 +316,7 @@ export const StoryTemplate = ({
     );
   };
 
-  const headlinePriorityTemplate = () => {
+  const headlinePriorityTemplate = (hasAccess) => {
     return (
       <>
         <HeaderCard />
@@ -215,7 +325,28 @@ export const StoryTemplate = ({
         </div>
         <div styleName="story-content-inner-wrapper">
           <CaptionAttribution story={story} config={config} />
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         <SideColumn />
@@ -223,7 +354,7 @@ export const StoryTemplate = ({
     );
   };
 
-  const headlineOverlayTemplate = () => {
+  const headlineOverlayTemplate = (hasAccess) => {
     return (
       <>
         <div styleName="hero-image index-2" data-test-id="headline-overlay-hero-image">
@@ -240,7 +371,28 @@ export const StoryTemplate = ({
         <HeaderCard />
         <div styleName="story-content-inner-wrapper">
           <CaptionAttribution story={story} config={config} />
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         <AsideCollectionCard />
@@ -248,24 +400,23 @@ export const StoryTemplate = ({
     );
   };
 
-  const getStoryTemplate = (templateType) => {
+  const getStoryTemplate = (templateType, hasAccess) => {
     switch (templateType) {
       case "hero-priority-center":
-        return heroPriorityCenterTemplate();
+        return heroPriorityCenterTemplate(hasAccess);
       case "default":
-        return heroPriorityLeftTemplate();
+        return heroPriorityLeftTemplate(hasAccess);
       case "headline-hero-priority":
-        return headlineHeroPriorityTemplate();
+        return headlineHeroPriorityTemplate(hasAccess);
       case "hero-vertical-priority":
-        return heroVerticalTemplate();
+        return heroVerticalTemplate(hasAccess);
       case "headline-priority":
-        return headlinePriorityTemplate();
+        return headlinePriorityTemplate(hasAccess);
       case "headline-overlay-priority":
-        return headlineOverlayTemplate();
+        return headlineOverlayTemplate(hasAccess);
     }
   };
-
-  return <>{getStoryTemplate(templateType)}</>;
+  return <>{getStoryTemplate(templateType, hasAccess)}</>;
 };
 
 StoryTemplate.propTypes = {
@@ -281,4 +432,5 @@ StoryTemplate.propTypes = {
   storyElementsConfig: PropTypes.object,
   widgetComp: PropTypes.func,
   adComponent: PropTypes.func,
+  hasAccess: PropTypes.bool,
 };

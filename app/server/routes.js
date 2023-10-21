@@ -6,27 +6,27 @@ export const STATIC_ROUTES = [
   {
     path: "/about-us",
     pageType: PAGE_TYPE.STATIC_PAGE,
-    renderParams: { contentTemplate: "./about-us" }
+    renderParams: { contentTemplate: "./about-us" },
   },
   {
     path: "/preview/story",
     pageType: PAGE_TYPE.STORY_PREVIEW,
     exact: true,
     renderParams: { contentTemplate: "./story-preview" },
-    disableIsomorphicComponent: false
+    disableIsomorphicComponent: false,
   },
   {
     path: "/preview/home",
     pageType: PAGE_TYPE.HOME_PREVIEW,
     exact: true,
     renderParams: { contentTemplate: "./story-preview" },
-    disableIsomorphicComponent: false
+    disableIsomorphicComponent: false,
   },
   {
     path: "/ampstories/*",
     pageType: PAGE_TYPE.VISUAL_STORY,
-    exact: true
-  }
+    exact: true,
+  },
 ];
 
 const ISOMORPHIC_ROUTES = [
@@ -34,42 +34,47 @@ const ISOMORPHIC_ROUTES = [
     path: "/template-options",
     pageType: PAGE_TYPE.CATALOG_PAGE,
     exact: true,
-    skipPWA: true
+    skipPWA: true,
   },
   {
     path: "/preview/story/:encryptedKey",
     pageType: PAGE_TYPE.STORY_PUBLIC_PREVIEW_PAGE,
-    exact: true
+    exact: true,
   },
-
+  {
+    path: "/ugc-page",
+    pageType: PAGE_TYPE.UGC_PAGE,
+    exact: true,
+  },
   {
     path: `${TAG_PAGE_URL_PREFIX}:tagSlug`,
     pageType: PAGE_TYPE.TAG_PAGE,
-    exact: true
+    exact: true,
   },
   { path: "/search", pageType: PAGE_TYPE.SEARCH_PAGE, exact: true },
   {
     path: "/forms/:formSlug",
     pageType: PAGE_TYPE.FORM_PAGE,
-    exact: true
+    exact: true,
   },
   { path: "/collection/:collectionSlug", pageType: PAGE_TYPE.COLLECTION_PAGE, exact: true, skipPWA: true },
   { path: "/author/:authorSlug", pageType: PAGE_TYPE.AUTHOR_PAGE, exact: true },
+  { path: "/subscription", pageType: PAGE_TYPE.SUBSCRIPTION_PAGE, exact: true },
   {
     path: "/auth/reset-password",
     pageType: PAGE_TYPE.RESET_PASSWORD_PAGE,
-    exact: true
+    exact: true,
   },
   {
     path: "/profile",
     pageType: PAGE_TYPE.PROFILE_PAGE,
-    exact: true
+    exact: true,
   },
   {
     path: "/user-login",
     pageType: PAGE_TYPE.USER_LOGIN,
-    exact: true
-  }
+    exact: true,
+  },
 ];
 
 export function generateRoutes(config, domainSlug = undefined) {

@@ -9,7 +9,7 @@ import { AppLogo } from "../../layouts/app-logo";
 import "./user-login.m.css";
 
 const UserLoginPage = () => {
-  const qtConfig = useSelector(state => get(state, ["qt"], {}));
+  const qtConfig = useSelector((state) => get(state, ["qt"], {}));
   const publisherAttributes = get(qtConfig, ["config", "publisher-attributes"], {});
   const currentPath = get(qtConfig, ["currentPath"], "");
   const params = parseUrl(currentPath);

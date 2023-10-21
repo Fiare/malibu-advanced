@@ -78,3 +78,120 @@
   margin-bottom: 12px;
   text-align: center;
 }
+
+.active-plan-label {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 12px 0;
+}
+
+.end-date-text {
+  font-weight: bold;
+  color: var(--brand-primary-dark);
+  font-size: var(--base-smaller);
+}
+
+.hidden {
+  display: none;
+}
+
+.shown {
+  display: flex;
+}
+
+.plan {
+  margin-bottom: 10px;
+}
+
+.plan-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.malibu-form-link {
+  overflow: auto;
+  min-width: 60vw;
+  padding: 20px;
+  height: auto;
+  input:not([type="checkbox"]):not([type="radio"]) {
+    display: block;
+    border-radius: 3px;
+    border: solid 1px var(--grey-dark);
+    margin-bottom: 25px;
+    padding: 15px 15px 15px 8px;
+    font-size: 14px;
+    width: 100%;
+  }
+  .malibu-link {
+    color: var(--brand-secondary);
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .btn-submit {
+    color: var(--white);
+    background-color: var(--brand-primary);
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-radius: 4px;
+  }
+  .error {
+    font-size: 16px;
+    margin-top: 14px;
+    color: var(--torch-red);
+  }
+
+  & > h3 {
+    margin-bottom: 16px;
+  }
+}
+
+.resend-otp-btn {
+  margin: 10px 0;
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.resend-otp {
+  font-size: 14px;
+  cursor: default;
+  padding: 0;
+  color: var(--grey-dark);
+
+  & > span {
+    font-size: 16px;
+  }
+}
+
+.otp-error {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: var(--torch-red);
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.edit-icon {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.link {
+  text-decoration: underline;
+  cursor: pointer;
+  color: var(--brand-primary);
+}
+
+.link-disable {
+  pointer-events: none;
+  color: black;
+  text-decoration: none;
+}

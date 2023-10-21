@@ -18,7 +18,7 @@ export function preRenderApplication(store) {
     breakingNewsConfig.interval && breakingNewsConfig.interval <= 60 ? 60 : breakingNewsConfig.interval;
   const breakingNewsbaseProps = {
     hydrate,
-    updateInterval: breakingNewsInterval * 1000
+    updateInterval: breakingNewsInterval * 1000,
   };
 
   if (pageType !== "user-login") {
@@ -43,6 +43,6 @@ export function renderApplication(store) {
   enableAds && pageType !== "profile-page" && pageType !== "user-login" && renderComponent(TopAd, "top-ad", store);
   placeholderDelay && renderComponent(gumletScriptGenerator, "gumlet-script-generator", store);
   renderIsomorphicComponent("container", store, pickComponent, {
-    hydrate: !global.qtLoadedFromShell
+    hydrate: !global.qtLoadedFromShell,
   });
 }

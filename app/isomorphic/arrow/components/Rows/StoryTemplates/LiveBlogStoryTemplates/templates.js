@@ -1,4 +1,6 @@
+/* eslint-disable react/no-unknown-property */
 import React from "react";
+import { useSelector } from "react-redux";
 import get from "lodash/get";
 import PropTypes from "prop-types";
 import { SocialShare } from "@quintype/components";
@@ -18,6 +20,9 @@ import LiveIcon from "../../../Svgs/liveicon";
 import KeyEvents from "../../../Molecules/KeyEvents";
 import { ClockIcon } from "../../../Svgs/clock-icon";
 import { StoryHeadline } from "../../../Atoms/StoryHeadline";
+import { Paywall } from "../../Paywall";
+import { MetypeCommentsWidget } from "../../../../../components/Metype/commenting-widget";
+import { MetypeReactionsWidget } from "../../../../../components/Metype/reaction-widget";
 
 export const LiveBlogStoryTemplates = ({
   story = {},
@@ -28,6 +33,7 @@ export const LiveBlogStoryTemplates = ({
   firstChild,
   secondChild,
   timezone,
+  hasAccess,
 }) => {
   const {
     theme = "",
@@ -51,6 +57,11 @@ export const LiveBlogStoryTemplates = ({
 
   const isMobile = clientWidth("mobile");
   const storyId = get(story, ["id"], "");
+  const metypeConfig = useSelector((state) => get(state, ["qt", "config", "publisher-attributes", "metypeConfig"], {}));
+  const isMetypeEnabled = useSelector((state) =>
+    get(state, ["qt", "config", "publisher-attributes", "enableMetype"], true)
+  );
+  const jwtToken = useSelector((state) => get(state, ["userReducer", "jwt_token"], null));
 
   const HeaderCard = () => {
     const isBlogClosed = get(story, ["metadata", "is-closed"]);
@@ -69,41 +80,59 @@ export const LiveBlogStoryTemplates = ({
       </div>
     );
   };
-  const StoryCards = () => {
-    return visibleCards.map((card = {}, index) => {
-      const borderBottom = index === visibleCards.length - 1 ? "" : `share-cards ${textColor}`;
-      const cardId = get(card, ["id"], "");
-      const { "card-added-at": cardAddedAt } = card;
-      return (
-        <div key={index} styleName={borderBottom}>
-          <div styleName="card-share">
-            <div styleName={`time-wrapper ${textColor}`}>
-              <ClockIcon color={updateColor} />
-              {getTimeStamp(cardAddedAt, timestampToFormat, { isTimeFirst: true })}
+  const StoryCards = ({ hasAccess }) => {
+    const isStoryBehindPaywall = story.access === "subscription" && hasAccess === false;
+
+    return isStoryBehindPaywall ? (
+      <>
+        <StoryElementCard
+          story={story}
+          card={visibleCards[0]}
+          key={get(visibleCards[0], ["id"], "")}
+          config={storyElementsConfig}
+          isLive
+          theme={theme}
+          adComponent={adComponent}
+          widgetComp={widgetComp}
+        />
+        <Paywall />
+      </>
+    ) : (
+      visibleCards.map((card = {}, index) => {
+        const borderBottom = index === visibleCards.length - 1 ? "" : `share-cards ${textColor}`;
+        const cardId = get(card, ["id"], "");
+        const { "card-added-at": cardAddedAt } = card;
+        return (
+          <div key={index} styleName={borderBottom}>
+            <div styleName="card-share">
+              <div styleName={`time-wrapper ${textColor}`}>
+                <ClockIcon color={updateColor} />
+                {getTimeStamp(cardAddedAt, timestampToFormat, { isTimeFirst: true })}
+              </div>
+              <div id={`card-share-${cardId}_${storyId}`} className="content-style">
+                <SocialShare
+                  template={SocialShareTemplate}
+                  fullUrl={encodeURI(story.url)}
+                  title={story.headline}
+                  theme={theme}
+                  iconType={shareIconType}
+                />
+              </div>
             </div>
-            <div id={`card-share-${cardId}_${storyId}`} className="content-style">
-              <SocialShare
-                template={SocialShareTemplate}
-                fullUrl={encodeURI(story.url)}
-                title={story.headline}
-                theme={theme}
-                iconType={shareIconType}
-              />
-            </div>
+            <StoryElementCard
+              story={story}
+              card={card}
+              key={cardId}
+              config={storyElementsConfig}
+              isLive
+              theme={theme}
+              adComponent={adComponent}
+              widgetComp={widgetComp}
+            />
           </div>
-          <StoryElementCard
-            story={story}
-            card={card}
-            key={cardId}
-            config={storyElementsConfig}
-            isLive
-            theme={theme}
-            adComponent={adComponent}
-            widgetComp={widgetComp}
-          />
-        </div>
-      );
-    });
+        );
+      })
+    );
   };
 
   const keyEvents = () => {
@@ -137,7 +166,7 @@ export const LiveBlogStoryTemplates = ({
     return keyEvents();
   };
 
-  const StoryData = () => {
+  const StoryData = ({ hasAccess }) => {
     return (
       <>
         <AuthorCard clazzName="gap-32" story={story} template={authorDetails.template} opts={authorDetails.opts} />
@@ -146,7 +175,7 @@ export const LiveBlogStoryTemplates = ({
           {!verticalShare && <SocialShareComponent />}
         </div>
         {showKeyEvents()}
-        <StoryCards />
+        <StoryCards hasAccess={hasAccess} />
         <div styleName="space-32">
           {firstChild}
           <StoryTags tags={story.tags} />
@@ -162,7 +191,7 @@ export const LiveBlogStoryTemplates = ({
     );
   };
 
-  const DefaultTemplate = (story) => {
+  const DefaultTemplate = (story, hasAccess) => {
     return (
       <>
         <div data-test-id="hero-image" styleName="grid-col-full index-2">
@@ -178,7 +207,28 @@ export const LiveBlogStoryTemplates = ({
         <div styleName="header-wrapper">
           <CaptionAttribution story={story} config={config} />
           <HeaderCard />
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         <div styleName="side-column">
@@ -199,7 +249,7 @@ export const LiveBlogStoryTemplates = ({
     );
   };
 
-  const HeroOverlay = (story) => {
+  const HeroOverlay = (story, hasAccess) => {
     return (
       <>
         <div styleName="overlay-hero index-2">
@@ -217,7 +267,28 @@ export const LiveBlogStoryTemplates = ({
         </div>
         <div styleName="grid-col-4-12 ">
           <CaptionAttribution story={story} config={config} />
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         {asideCollection && (
@@ -236,7 +307,7 @@ export const LiveBlogStoryTemplates = ({
     );
   };
 
-  const HeadlineSideway = (story) => {
+  const HeadlineSideway = (story, hasAccess) => {
     return (
       <>
         <div styleName="grid-col-2-9 sideway ">
@@ -247,7 +318,28 @@ export const LiveBlogStoryTemplates = ({
           <CaptionAttribution story={story} config={config} />
         </div>
         <div styleName="grid-col-4-12 ">
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         {asideCollection && (
@@ -266,7 +358,7 @@ export const LiveBlogStoryTemplates = ({
     );
   };
 
-  const HeadlinePriority = (story) => {
+  const HeadlinePriority = (story, hasAccess) => {
     return (
       <>
         <div styleName="grid-col-2-9  grid-row-1-2 headline-space">
@@ -277,7 +369,28 @@ export const LiveBlogStoryTemplates = ({
         </div>
         <div styleName="grid-col-2-9  grid-row-3-4">
           <CaptionAttribution story={story} config={config} />
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         <div styleName="grid-col-9-14 grid-row-1-6">
@@ -298,7 +411,7 @@ export const LiveBlogStoryTemplates = ({
     );
   };
 
-  const HeroPriority = (story) => {
+  const HeroPriority = (story, hasAccess) => {
     return (
       <>
         <div styleName="grid-container index-2">
@@ -307,7 +420,28 @@ export const LiveBlogStoryTemplates = ({
         <div styleName="grid-col-4-12 ">
           <CaptionAttribution story={story} config={config} />
           <HeaderCard />
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         {asideCollection && (
@@ -326,7 +460,7 @@ export const LiveBlogStoryTemplates = ({
     );
   };
 
-  const HeadlineHeroPriority = (story) => {
+  const HeadlineHeroPriority = (story, hasAccess) => {
     return (
       <>
         <div styleName="grid-col-4-12 headline-space">
@@ -337,7 +471,28 @@ export const LiveBlogStoryTemplates = ({
         </div>
         <div styleName="grid-col-4-12 ">
           <CaptionAttribution story={story} config={config} />
-          <StoryData />
+          <StoryData hasAccess={hasAccess} />
+          {isMetypeEnabled && (
+            <>
+              <MetypeReactionsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                storyUrl={story.url}
+                storyId={story.id}
+              />
+              <MetypeCommentsWidget
+                host={metypeConfig.metypeHost}
+                accountId={metypeConfig.metypeAccountId}
+                pageURL={story.url}
+                primaryColor={metypeConfig.primaryColor}
+                className={metypeConfig.className}
+                jwt={jwtToken}
+                fontUrl={metypeConfig.fontFamilyUrl}
+                fontFamily={metypeConfig.fontFamily}
+                storyId={story.id}
+              />
+            </>
+          )}
         </div>
         {verticalShare && <SocialShareComponent />}
         {asideCollection && (
@@ -356,24 +511,24 @@ export const LiveBlogStoryTemplates = ({
     );
   };
 
-  const getLiveBlogStoryTemplates = (templateType) => {
+  const getLiveBlogStoryTemplates = (templateType, hasAccess) => {
     switch (templateType) {
       case "hero-priority":
-        return HeroPriority(story);
+        return HeroPriority(story, hasAccess);
       case "hero-overlay":
-        return HeroOverlay(story);
+        return HeroOverlay(story, hasAccess);
       case "headline-sideway":
-        return HeadlineSideway(story);
+        return HeadlineSideway(story, hasAccess);
       case "headline-priority":
-        return HeadlinePriority(story);
+        return HeadlinePriority(story, hasAccess);
       case "headline-hero-priority":
-        return HeadlineHeroPriority(story);
+        return HeadlineHeroPriority(story, hasAccess);
       default:
-        return DefaultTemplate(story);
+        return DefaultTemplate(story, hasAccess);
     }
   };
 
-  return <>{getLiveBlogStoryTemplates(templateType)}</>;
+  return <>{getLiveBlogStoryTemplates(templateType, hasAccess)}</>;
 };
 
 LiveBlogStoryTemplates.propTypes = {
@@ -389,4 +544,5 @@ LiveBlogStoryTemplates.propTypes = {
   storyElementsConfig: PropTypes.object,
   adComponent: PropTypes.func,
   widgetComp: PropTypes.func,
+  hasAccess: PropTypes.bool,
 };

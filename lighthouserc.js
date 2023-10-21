@@ -31,6 +31,9 @@ const lhciConfig = {
         "image-alt": "warn",
         "link-text": "warn",
         "unsized-images": "warn",
+        deprecations: "warn",
+        "unused-css-rules": "warn",
+        "frame-title": "warn",
       },
     },
     upload: {

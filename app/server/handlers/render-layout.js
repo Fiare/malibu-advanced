@@ -27,6 +27,7 @@ export async function renderLayout(res, params) {
     enableAds,
     loadAdsSynchronously,
     pageType,
+    enableMetype,
   } = getConfig(params.store.getState());
   const chunk = params.shell ? null : allChunks[getChunkName(params.pageType)];
   const criticalCss = await getCriticalCss();
@@ -38,12 +39,23 @@ export async function renderLayout(res, params) {
     get(params.store.getState(), ["qt", "config", "publisher-attributes", "placeholder_delay"])
   );
 
+  // Need to change this condition after static page api is fixed
+  const metadataHeader =
+    (pageType === "static-page" && params.metadata?.header && params.metadata?.header === true) ||
+    (pageType !== "static-page" && params.metadata?.header === undefined);
+  const metadataFooter =
+    (pageType === "static-page" && params.metadata?.footer && params.metadata?.footer === true) ||
+    (pageType !== "static-page" && params.metadata?.footer === undefined);
+
   res.render(
     "pages/layout",
     Object.assign(
       {
         isProduction,
         assetPath: assetPath,
+        metadata: params.metadata,
+        metadataHeader: metadataHeader,
+        metadataFooter: metadataFooter,
         content: params.content || "",
         cssContent: cssContent,
         criticalCss: criticalCss,
@@ -79,6 +91,7 @@ export async function renderLayout(res, params) {
         placeholderDelay,
         pageType,
         enableBreakingNews: params.pageType !== "profile-page",
+        enableMetype: enableMetype,
       },
       params
     )

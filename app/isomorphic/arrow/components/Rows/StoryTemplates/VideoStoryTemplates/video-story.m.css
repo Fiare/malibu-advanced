@@ -193,3 +193,13 @@
     z-index: 2;
   }
 }
+:global {
+  @media only screen and (max-width: 768px) {
+    .arr-story-grid {
+      display: block;
+    }
+    .story-element-jsembed{
+      word-break: break-word;
+    }
+  }
+}

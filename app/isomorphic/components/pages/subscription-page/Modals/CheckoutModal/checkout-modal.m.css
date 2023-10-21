@@ -1,0 +1,140 @@
+.modal {
+  display: flex;
+  margin: 0 auto;
+  flex-direction: column;
+  align-items: center;
+}
+
+.proceed-to-payment-btn {
+  margin-top: 8px;
+  background-color: black;
+  color: white;
+  height: 42px;
+  font-size: 14px;
+  font-weight: 900;
+  width: 100%;
+}
+
+.checkout-label {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.secure {
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.current-step {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.plan-name-and-price {
+  display: flex;
+  justify-content: space-between;
+}
+
+.group-plan-name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.price {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.label {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.plan-preview {
+  margin-bottom: 8px;
+}
+
+.validity {
+  font-size: 12px;
+  color: darkgrey;
+}
+
+.amount-saved {
+  font-size: 12px;
+  color: var(--brand-primary-dark);
+  margin: 8px 0;
+}
+
+.coupon-error{
+  font-size: 12px;
+  margin: 8px 0;
+  color: rgb(218, 76, 76);
+}
+
+.apply-coupon-btn {
+  border: 1px solid var(--brand-primary-dark);
+  color: var(--brand-primary-dark);
+  height: 40px;
+  padding: 12px;
+  cursor: pointer;
+}
+
+.change-plan-btn,
+.add-coupon-code-btn {
+  color: var(--brand-primary-dark);
+  margin: 16px 8px 0 0;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.coupon-code-label {
+  margin-top: 8px;
+}
+
+.coupon-code-input {
+  height: 40px;
+  padding: 12px;
+}
+
+.plan-and-coupon-btns {
+  display: flex;
+}
+
+.checkout-container {
+  border: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 30px 20px;
+  width: 320px;
+  height: 400px;
+}
+
+.total-payment{
+  display: flex;
+  justify-content: space-between;
+}
+
+.radio-label{
+  margin-left: 8px;
+}
+
+.coupon-apply{
+  display: flex;
+}
+
+.change-account{
+  border: 1px solid black;
+  padding: 30px 20px;
+  height: 120px;
+  margin: 10px;
+  width: 320px;
+}
+
+.not-you-btn{
+  margin-left: 16px;
+  cursor: pointer;
+  color: var(--brand-primary-dark);
+}

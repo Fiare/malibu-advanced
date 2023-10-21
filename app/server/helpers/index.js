@@ -98,6 +98,7 @@ export const getConfig = (state) => {
     enableAds: get(state, ["qt", "config", "ads-config", "dfp_ads", "enable_ads"]),
     loadAdsSynchronously: get(state, ["qt", "config", "ads-config", "dfp_ads", "load_ads_synchronously"]),
     pageType: get(state, ["qt", "pageType"], ""),
+    enableMetype: get(state, ["qt", "config", "publisher-attributes", "enableMetype"], true),
   };
 };
 

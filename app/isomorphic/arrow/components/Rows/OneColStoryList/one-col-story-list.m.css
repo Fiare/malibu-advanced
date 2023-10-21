@@ -79,3 +79,8 @@
 .one-col-story-list-wrapper :global(.arr--button) {
   margin: 0 auto var(--arrow-spacing-xs) auto;
 }
+
+.one-col-story-list-wrapper :global(.arr--story-content),
+.one-col-story-list-wrapper :global(.arr--headline) > a > h4 {
+  overflow-wrap: anywhere;
+}

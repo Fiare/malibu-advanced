@@ -9,7 +9,7 @@ import { isValidEmail } from "../../utils";
 import "./forms.m.css";
 
 export function ForgotPassword({ onClose, activeLoginTab }) {
-  const isVerificationLinkFlow = useSelector(state =>
+  const isVerificationLinkFlow = useSelector((state) =>
     get(state, ["qt", "config", "publisher-attributes", "is_verification_link_flow"], false)
   );
   const [email, setEmail] = useState("");
@@ -17,7 +17,7 @@ export function ForgotPassword({ onClose, activeLoginTab }) {
     otp: "",
     password: "",
     confirmPassword: "",
-    id: ""
+    id: "",
   });
   const [error, setError] = useState({});
   const [showVerficationScreen, verificationScreenHandler] = useState(false);
@@ -25,7 +25,7 @@ export function ForgotPassword({ onClose, activeLoginTab }) {
   const [verificationLinkMessage, setVerificationLinkMessage] = useState(null);
   const [otpMessage, setOtpMessage] = useState(null);
 
-  const emailHandler = async e => {
+  const emailHandler = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -40,8 +40,8 @@ export function ForgotPassword({ onClose, activeLoginTab }) {
     }
 
     setError(null);
-
-    const { message, error } = isVerificationLinkFlow ? await forgotPassword({ email }) : await sendOtp(email);
+    const data = { email: email };
+    const { message, error } = isVerificationLinkFlow ? await forgotPassword({ email }) : await sendOtp(data);
     if (error) {
       setError(error);
       return;
@@ -61,14 +61,14 @@ export function ForgotPassword({ onClose, activeLoginTab }) {
     }
   };
 
-  const setData = e => {
+  const setData = (e) => {
     const userObj = { ...data };
     const fieldName = e.target.id;
     userObj[fieldName] = e.target.value;
     setOTPData(userObj);
   };
 
-  const changePassword = async e => {
+  const changePassword = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -90,7 +90,7 @@ export function ForgotPassword({ onClose, activeLoginTab }) {
     const resObj = {
       email: email,
       otp: data.otp.trim(),
-      "new-password": data.password
+      "new-password": data.password,
     };
     const { message, error } = await resetPassword(resObj);
     if (error) {
@@ -108,7 +108,7 @@ export function ForgotPassword({ onClose, activeLoginTab }) {
   if (showVerficationScreen) {
     return (
       <form styleName="malibu-form" key="otp" onSubmit={changePassword}>
-        <p styleName="message">Please enter verification code sent to {email} to reset your password.</p>
+        <p styleName="message">Please enter verification code sent to {email} to reset your password.</p>
         <InputField name="Enter OTP" id="otp" type="text" value={data.otp} required onChange={setData} />
         <InputField
           name="Enter Password"
@@ -148,7 +148,7 @@ export function ForgotPassword({ onClose, activeLoginTab }) {
 
   return (
     <form styleName="malibu-form" onSubmit={emailHandler}>
-      <InputField name="Email" id="email" type="email" onChange={e => setEmail(e.target.value)} required />
+      <InputField name="Email" id="email" type="email" onChange={(e) => setEmail(e.target.value)} required />
       {error && <p styleName="error">{error.message}</p>}
       <div styleName="actions">
         <button aria-label="forgot-password-submit" onClick={emailHandler} className="malibu-btn-large">
@@ -162,5 +162,5 @@ export function ForgotPassword({ onClose, activeLoginTab }) {
 ForgotPassword.propTypes = {
   onClose: func,
   isVerificationLinkFlow: bool,
-  activeLoginTab: func
+  activeLoginTab: func,
 };

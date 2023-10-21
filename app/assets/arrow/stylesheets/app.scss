@@ -80,6 +80,9 @@
   /* Z-Index */
   --z-index-9: 9;
   --z-index-1: 1;
+  --z-index-m1: -1;
+  --z-index-m2: -2;
+  --z-index-m3: -3;
 }
 
 .arrow-component {
@@ -260,8 +263,8 @@
     margin: unset;
     @media only screen and (min-width: 1025px) {
       grid-template-columns:
-        [grid-start] minmax(48px, auto) [container-start] repeat(12, minmax(auto, 55px)) [container-end] minmax(
-          48px,
+        [grid-start] minmax(56px, auto) [container-start] repeat(12, minmax(auto, 73px)) [container-end] minmax(
+          56px,
           auto
         )
         [grid-end];

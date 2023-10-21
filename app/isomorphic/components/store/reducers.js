@@ -37,9 +37,27 @@ function loginReducer(state = false, action) {
   }
 }
 
+const userIntialState = {
+  jwt_token: null,
+};
+
+function userReducer(state = userIntialState, action) {
+  switch (action.type) {
+    case "METYPE_JWT_TOKEN":
+      return {
+        ...state,
+        jwt_token: action.payload,
+      };
+
+    default:
+      return state;
+  }
+}
+
 export const REDUCERS = {
   isHamburgerMenuOpen: hamburgerMenuReducer,
   isSearchBarOpen: searchBarReducer,
   member: memberReducer,
-  isLoginOpen: loginReducer
+  isLoginOpen: loginReducer,
+  userReducer: userReducer,
 };

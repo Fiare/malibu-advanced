@@ -11,7 +11,7 @@
   .buttons {
     display: flex;
     list-style: none;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-wrap: wrap;
   }
   .button {
@@ -30,6 +30,14 @@
     margin-right: 7px;
     display: flex;
     align-items: center;
+  }
+
+  .loginBtn {
+    background-color: var(--white);
+    border: none;
+    display: flex;
+    align-items: center;
+    padding: 0;
   }
 }
 

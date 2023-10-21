@@ -13,10 +13,11 @@
   "dependencies": {
     "@loadable/component": "^5.14.1",
     "@loadable/server": "^5.14.2",
-    "@quintype/bridgekeeper-js": "^2.8.1",
-    "@quintype/components": "^3.0.2",
-    "@quintype/framework": "^7.7.7",
-    "@quintype/seo": "^1.40.10",
+    "@metype/components": "^2.3.3",
+    "@quintype/bridgekeeper-js": "^2.8.2-feature-otp.1",
+    "@quintype/components": "^3.4.2",
+    "@quintype/framework": "^7.20.0",
+    "@quintype/seo": "^1.42.2",
     "axios": "^0.24.0",
     "fontfaceobserver": "^2.1.0",
     "intersection-observer": "^0.12.2",
@@ -69,7 +70,7 @@
     "svgo-loader": "^3.0.0",
     "webpack": "^5.59.1",
     "webpack-bundle-analyzer": "^4.5.0",
-    "webpack-cli": "4.9.1",
+    "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.3.1"
   },
   "babel": {

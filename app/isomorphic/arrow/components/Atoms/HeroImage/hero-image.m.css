@@ -1,7 +1,7 @@
 @custom-media --viewport-medium (width >= 768px);
 
 .hero-image {
-  margin-bottom: var(--arrow-spacing-xs);
+  margin: var(--arrow-spacing-xs) 0;
   padding-right: 0;
   flex-grow: 1;
   position: relative;

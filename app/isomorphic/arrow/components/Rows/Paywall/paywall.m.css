@@ -1,0 +1,44 @@
+.paywall-container {
+  margin: 16px 0;
+  padding: 32px 48px;
+  border-radius: 2px;
+  background-color: #f7f7f7;
+}
+
+.paywall-headline {
+  font-size: 40px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.paywall-description {
+  font-size: 16px;
+}
+
+.view-plans-btn {
+  padding: 10px 12px;
+  border-radius: 3px;
+  background-color: var(--brand-primary-dark);
+  cursor: pointer;
+  color: white;
+  border: none;
+  margin: 32px auto 0;
+  width: fit-content;
+}
+
+.view-plans-link {
+  font-weight: bold;
+}
+
+.go-to-login {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 24px;
+  height: 36px;
+  border-top: 1px solid #dedede;
+}
+
+.go-to-login-link {
+  margin-left: 4px;
+  text-decoration: underline;
+}

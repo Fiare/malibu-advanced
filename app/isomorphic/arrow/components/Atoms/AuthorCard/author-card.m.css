@@ -6,9 +6,21 @@
   display: flex;
 }
 
+.row {
+  flex-direction: row;
+}
+
+.column {
+  flex-direction: column;
+}
+
 .author-card-wrapper.centerAligned {
   display: block;
   text-align: center;
+}
+
+.author-images {
+  display: flex;
 }
 
 .author-image-wrapper {
@@ -99,7 +111,8 @@
   align-items: center;
   font-size: var(--arrow-fs-xs);
   line-height: var(--arrow-lh-1);
-  justify-content: center;
+  justify-content: inherit;
+  flex-wrap: wrap;
   @media (min-width: mobile) {
     font-size: var(--arrow-fs-s);
   }

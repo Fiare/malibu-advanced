@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { AccessType, InfiniteStoryBase, WithPreview } from "@quintype/components";
-import { object, shape } from "prop-types";
+import { object, shape, string } from "prop-types";
 
 import StoryWrapper from "../story-templates/story-wrapper";
 import { useSelector } from "react-redux";
@@ -65,7 +65,9 @@ function storyPageLoadItems(pageNumber) {
       offset: 5 * pageNumber,
     })
     .get()
-    .json((response) => response.stories.map((story) => ({ story, otherProp: "value" })));
+    .json((response) =>
+      response.stories.map((story) => ({ story, currentPath: `/${story.slug}`, otherProp: "value" }))
+    );
 }
 
 export function StoryPage(props) {
@@ -79,6 +81,7 @@ export function StoryPage(props) {
           app.registerPageView({ pageType: "story-page", data: { story: item.story } }, `/${item.story.slug}`)
         }
         onItemFocus={(item) => console.log(`Story In View: ${item.story.headline}`)}
+        changeUrlTo={(item) => item.currentPath || props.currentPath}
       />
     </div>
   );
@@ -89,6 +92,7 @@ StoryPage.propTypes = {
     story: object,
     config: object,
   }),
+  currentPath: string,
 };
 
 export const StoryPagePreview = WithPreview(StoryPage, (data, story) =>
